@@ -1,10 +1,11 @@
 #!/bin/bash
 
-PHANTOM_JS_EXE="/home/ubuntu/node_modules/phantomjs-prebuilt/bin/phantomjs"
+NPM_ROOT="/home/ubuntu"
+PHANTOM_JS_EXE="${NPM_ROOT}/node_modules/phantomjs-prebuilt/bin/phantomjs"
 MODEL_NAME=$(juju switch | awk 'BEGIN {FS="/"} {print $NF}')
 
 function apt_install {
-    sudo apt install --yes virtualenv xvfb npm
+    sudo apt install --yes virtualenv xvfb npm libfontconfig
 }
 
 function fix_create_volume_default {
@@ -13,7 +14,7 @@ function fix_create_volume_default {
 
 function install_phantomjs {
     if [[ ! -f $PHANTOM_JS_EXE ]]; then
-        npm install phantomjs-prebuilt
+        ( cd $NPM_ROOT; npm install phantomjs-prebuilt; )
     fi
 }
 
