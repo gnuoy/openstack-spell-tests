@@ -1,7 +1,8 @@
 #!/bin/bash
 
-NPM_ROOT="/home/ubuntu"
-PHANTOM_JS_EXE="${NPM_ROOT}/node_modules/phantomjs-prebuilt/bin/phantomjs"
+TEST_ROOT="/home/ubuntu"
+TEST_ENV_FILE="${TEST_ROOT}/test_env"
+PHANTOM_JS_EXE="${TEST_ROOT}/node_modules/phantomjs-prebuilt/bin/phantomjs"
 MODEL_NAME=$(juju switch | awk 'BEGIN {FS="/"} {print $NF}')
 
 function apt_install {
@@ -14,33 +15,33 @@ function fix_create_volume_default {
 
 function install_phantomjs {
     if [[ ! -f $PHANTOM_JS_EXE ]]; then
-        ( cd $NPM_ROOT; npm install phantomjs-prebuilt; )
+        ( cd $TEST_ROOT; npm install phantomjs-prebuilt; )
     fi
 }
 
 function setup_venv {
-    virtualenv --python python3 venv3
-    source venv3/bin/activate
+    virtualenv --python python3 ${TEST_ROOT}/venv3
+    source ${TEST_ROOT}/venv3/bin/activate
     pip install selenium PyVirtualDisplay xvfbwrapper
     pip install git+https://github.com/openstack-charmers/zaza.git
 }
 
 function grab_ssh_key {
-    juju scp nova-cloud-controller/0:/home/ubuntu/.ssh/id_rsa ubuntu_priv_key
+    juju scp nova-cloud-controller/0:/home/ubuntu/.ssh/id_rsa ${TEST_ROOT}/ubuntu_priv_key
     chmod 600 ubuntu_priv_key
 }
 
 function grab_novarc {
-    juju scp nova-cloud-controller/0:/home/ubuntu/novarc novarc
+    juju scp nova-cloud-controller/0:/home/ubuntu/novarc ${TEST_ROOT}/novarc
 }
 
 function create_test_env {
-    grep export novarc > test_env
-    echo "export MODEL_NAME=$MODEL_NAME" >> test_env
-    echo "export DISPLAY=:1" >> test_env
-    echo "export PRIV_KEY_PATH=/home/ubuntu/ubuntu_priv_key" >> test_env
-    echo "export PHANTOMJS_PATH=$PHANTOM_JS_EXE" >> test_env
-    echo "source venv3/bin/activate" >> test_env
+    grep export novarc > ${TEST_ENV_FILE}
+    echo "export MODEL_NAME=$MODEL_NAME" >> ${TEST_ENV_FILE}
+    echo "export DISPLAY=:1" >> ${TEST_ENV_FILE}
+    echo "export PRIV_KEY_PATH=${TEST_ROOT}/ubuntu_priv_key" >> ${TEST_ENV_FILE}
+    echo "export PHANTOMJS_PATH=$PHANTOM_JS_EXE" >> ${TEST_ENV_FILE}
+    echo "source venv3/bin/activate" >> ${TEST_ENV_FILE}
 }
 
 apt_install
