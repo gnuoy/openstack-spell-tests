@@ -28,7 +28,7 @@ function setup_venv {
 
 function grab_ssh_key {
     juju scp nova-cloud-controller/0:/home/ubuntu/.ssh/id_rsa ${TEST_ROOT}/ubuntu_priv_key
-    chmod 600 ubuntu_priv_key
+    chmod 600 ${TEST_ROOT}/ubuntu_priv_key
 }
 
 function grab_novarc {
@@ -36,12 +36,12 @@ function grab_novarc {
 }
 
 function create_test_env {
-    grep export novarc > ${TEST_ENV_FILE}
+    grep export ${TEST_ROOT}/novarc > ${TEST_ENV_FILE}
     echo "export MODEL_NAME=$MODEL_NAME" >> ${TEST_ENV_FILE}
     echo "export DISPLAY=:1" >> ${TEST_ENV_FILE}
     echo "export PRIV_KEY_PATH=${TEST_ROOT}/ubuntu_priv_key" >> ${TEST_ENV_FILE}
     echo "export PHANTOMJS_PATH=$PHANTOM_JS_EXE" >> ${TEST_ENV_FILE}
-    echo "source venv3/bin/activate" >> ${TEST_ENV_FILE}
+    echo "source ${TEST_ROOT}/venv3/bin/activate" >> ${TEST_ENV_FILE}
 }
 
 apt_install
