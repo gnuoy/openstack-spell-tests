@@ -3,14 +3,14 @@
 TEST_ROOT="/home/ubuntu"
 TEST_ENV_FILE="${TEST_ROOT}/test_env"
 PHANTOM_JS_EXE="${TEST_ROOT}/node_modules/phantomjs-prebuilt/bin/phantomjs"
-MODEL_NAME=$(juju switch | awk 'BEGIN {FS="/"} {print $NF}')
+MODEL_NAME=$(/snap/bin/juju switch | awk 'BEGIN {FS="/"} {print $NF}')
 
 function apt_install {
     sudo apt install --yes virtualenv xvfb npm libfontconfig
 }
 
 function fix_create_volume_default {
-    juju config openstack-dashboard default-create-volume=False
+    /snap/bin/juju config openstack-dashboard default-create-volume=False
 }
 
 function set_npm_proxy {
@@ -36,12 +36,12 @@ function setup_venv {
 }
 
 function grab_ssh_key {
-    juju scp nova-cloud-controller/0:/home/ubuntu/.ssh/id_rsa ${TEST_ROOT}/ubuntu_priv_key
+    /snap/bin/juju scp nova-cloud-controller/0:/home/ubuntu/.ssh/id_rsa ${TEST_ROOT}/ubuntu_priv_key
     chmod 600 ${TEST_ROOT}/ubuntu_priv_key
 }
 
 function grab_novarc {
-    juju scp nova-cloud-controller/0:/home/ubuntu/novarc ${TEST_ROOT}/novarc
+    /snap/bin/juju scp nova-cloud-controller/0:/home/ubuntu/novarc ${TEST_ROOT}/novarc
 }
 
 function create_test_env {

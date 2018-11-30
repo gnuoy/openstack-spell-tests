@@ -20,7 +20,7 @@ consoleHandler = logging.StreamHandler()
 logger.addHandler(consoleHandler)
 
 def getDashboardIP():
-    cmd = ['juju', 'status', 'openstack-dashboard', '--format', 'oneline']
+    cmd = ['/snap/bin/juju', 'status', 'openstack-dashboard', '--format', 'oneline']
     out = subprocess.check_output(cmd)
     return out.split()[2].decode('UTF8')
 

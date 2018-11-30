@@ -60,7 +60,7 @@ debug: true
 EOF
 }
 function run_conjure_up {
-    conjure-up -c $1
+    /snap/bin/conjure-up -c $1
 }
 case $(which lxd) in 
     "/usr/bin/lxd")
