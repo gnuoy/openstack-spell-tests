@@ -13,8 +13,17 @@ function fix_create_volume_default {
     juju config openstack-dashboard default-create-volume=False
 }
 
+function set_npm_proxy {
+    if [[ -n $NPM_PROXY ]]; then
+        echo "Setiing NPM proxy to $NPM_PROXY"
+        ( cd $TEST_ROOT; npm config set proxy $NPM_PROXY)
+        ( cd $TEST_ROOT; npm config set https-proxy $NPM_PROXY)
+    fi
+}
+
 function install_phantomjs {
     if [[ ! -f $PHANTOM_JS_EXE ]]; then
+        set_npm_proxy
         ( cd $TEST_ROOT; npm install phantomjs-prebuilt; )
     fi
 }
