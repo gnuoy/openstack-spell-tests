@@ -2,6 +2,9 @@
 
 function do_lxd_snap_install {
      sudo snap install lxd
+     sudo addgroup lxd || true
+     sudo usermod -a -G lxd $(id -n -u)
+     newgrp -
 }
 
 function do_lxd_snap_migrate {
