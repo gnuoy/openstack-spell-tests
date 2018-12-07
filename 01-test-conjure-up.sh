@@ -1,5 +1,7 @@
 #!/bin/bash
 
+spell_branch=$1
+
 function do_lxd_snap_install {
      sudo snap install lxd
      sudo addgroup lxd || true
@@ -62,7 +64,11 @@ debug: true
 EOF
 }
 function run_conjure_up {
-    sg lxd "/snap/bin/conjure-up -c $1"
+    if [[ -n $2 ]]; then
+        sg lxd "/snap/bin/conjure-up -c $1 --spells-dir=$2"
+    else
+        sg lxd "/snap/bin/conjure-up -c $1"
+    fi
 }
 case $(which lxd) in 
     "/usr/bin/lxd")
@@ -78,10 +84,13 @@ case $(which lxd) in
         do_lxd_snap_install
         ;;
 esac
-
+if [[ -n $spell_branch ]]; then
+    ( cd $HOME; git clone $spell_branch; )
+    spell_dir="$HOME/spells"
+fi
 do_lxd_init
 which conjure-up || do_conjure_up_install
 conjure_file=$(mktemp)
 echo $conjure_file
 write_conjure_file $conjure_file
-run_conjure_up $conjure_file
+run_conjure_up $conjure_file $spell_dir
